@@ -155,7 +155,8 @@ public class Client extends GPGSEntity
             showErrorDialog(connectionResult);
         }
 
-        GodotLib.calldeferred(parent.getInstanceID(), "_on_gpgs_connection_failed", new Object[] { });
-        Log.i(TAG, MODULE + ": onConnectionFailed result code: " + String.valueOf(connectionResult));
+        GodotLib.calldeferred(parent.getInstanceID(), "_on_gpgs_connection_failed", new Object[] {
+            connectionResult.getErrorCode(), connectionResult.getErrorMessage() });
+        Log.i(TAG, MODULE + ": onConnectionFailed result : " + String.valueOf(connectionResult));
     }
 }
