@@ -143,8 +143,10 @@ _on_gpgs_suspended()
 
 """
  Callback on connection failed
+ @param int error_code
+ @param String error_message
 """
-_on_gpgs_connection_failed()
+_on_gpgs_connection_failed(error_code, error_message)
 
 
 ################
