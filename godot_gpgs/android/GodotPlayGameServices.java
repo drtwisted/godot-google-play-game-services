@@ -292,7 +292,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *
      *      ...
      *
-     *      func _on_leaderboard_score_submitted(id, status):
+     *      func _on_leaderboard_score_submitted(id, score, status):
      *          if status == ST_OK:
      *              //succeeded action
      *          else:
@@ -318,7 +318,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
 
                                GodotLib.calldeferred(
                                        instance_id, "_on_leaderboard_score_submitted",
-                                       new Object[] { id, status });
+                                       new Object[] { id, score, status });
                     }
                 });
     }

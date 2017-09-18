@@ -59,7 +59,7 @@ If the plugin doesn't work:
         Leaderboards:
             _on_leaderboard_loaded
             _on_all_leaderboards_loaded
-            _on_leaderboard_score_submitted(String leaderboard_id, String status) [*_immediate]
+            _on_leaderboard_score_submitted(String leaderboard_id, int score, String status) [*_immediate]
 
         Achievements:
             _on_achievements_loaded
@@ -219,7 +219,7 @@ leaderboard_submit_score(id, score)
  
       ...
  
-      _on_leaderboard_score_submitted(id, status):
+      _on_leaderboard_score_submitted(id, score, status):
           if status == ST_OK:
               //succeeded action
           else:
@@ -240,9 +240,10 @@ _on_all_leaderboards_loaded
 """
  Callback on leaderboard_score_submitted_immediate
  @param String leaderboard_id
+ @param int score
  @param String status returned status "STATUS_OK" in case of success
 """
-_on_leaderboard_score_submitted(String leaderboard_id, String status)
+_on_leaderboard_score_submitted(String leaderboard_id, int score, String status)
 
 
 ###############
