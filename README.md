@@ -1,7 +1,5 @@
 # Godot Google Play Services
 
-```Contains pre-build export templates build for Godot Engine v 2.1.4```
-
 This is the Google Play Game Services module for Godot Engine (https://github.com/okamstudio/godot)
 - Android only
 - Leaderboards
