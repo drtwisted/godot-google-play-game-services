@@ -11,7 +11,7 @@ import com.google.android.gms.games.leaderboard.Leaderboards.SubmitScoreResult;
 public class Leaderboards extends GPGSComponent {
 
     public static final int REQUEST_ALL_LEADERBOARDS = 1002;
-    public static final int REQUEST_LEADERBOARD = 1002;
+    public static final int REQUEST_LEADERBOARD = 1003;
 
     public static final int TIME_SPAN_DAILY = 0;
     public static final int TIME_SPAN_WEEKLY = 1;

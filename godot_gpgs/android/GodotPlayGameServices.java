@@ -13,6 +13,10 @@ import com.google.android.gms.games.leaderboard.Leaderboards;
 import org.godotengine.godot.gpgs.Client;
 import org.godotengine.godot.gpgs.PlayerInfo;
 
+import static org.godotengine.godot.gpgs.Achievements.REQUEST_ACHIEVEMENTS;
+import static org.godotengine.godot.gpgs.Leaderboards.REQUEST_ALL_LEADERBOARDS;
+import static org.godotengine.godot.gpgs.Leaderboards.REQUEST_LEADERBOARD;
+
 public class GodotPlayGameServices extends Godot.SingletonBase {
 
     private static final String TAG = "godot";
@@ -20,9 +24,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
 
     private static final int RC_SIGN_IN = 9001;
 //    private static final int REQUEST_ACHIEVEMENTS = 9002;
-    private static final int REQUEST_ACHIEVEMENTS = 2002;
-    private static final int REQUEST_LEADERBOARD = 1002;
-    private static final int REQUEST_ALL_LEADERBOARDS = 1005;
+    //private static final int REQUEST_ACHIEVEMENTS = 2002;
+    //private static final int REQUEST_LEADERBOARD = 1002;
+    //private static final int REQUEST_ALL_LEADERBOARDS = 1005;
 
     private static GodotPlayGameServices singletonReference;
 
