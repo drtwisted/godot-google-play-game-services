@@ -245,7 +245,7 @@ _on_all_leaderboards_loaded
  @param int score
  @param String status returned status "STATUS_OK" in case of success
 """
-_on_leaderboard_score_submitted(String leaderboard_id, int score, String status)
+_on_leaderboard_score_submitted(leaderboard_id, score, status)
 
 
 ###############
@@ -299,7 +299,7 @@ achievement_unlock_immediate(achievement_id)
  
       gpgs.achievement_reveal(achievement_toasty)
 """
-achievement_reveal( achievement_id) 
+achievement_reveal(achievement_id) 
 
 
 """
@@ -427,7 +427,7 @@ update_player_info()
  
       var player_id = gpgs.get_player_id()
 """
-public String get_player_id() 
+get_player_id() 
 
 
 """
