@@ -19,9 +19,11 @@ This is the Google Play Game Services module for Godot Engine (https://github.co
 ```
   NOTE: If another module has already a specified APP_ID, you should remove it (allowed only once in the manifest).
 
-  3. [Recompile Android export template](http://docs.godotengine.org/en/latest/reference/compiling_for_android.html#compiling-export-templates).
+  3. Replace the `env.android_add_default_config("applicationId 'com.your.app.id'")` with your app unique ID in `android/config.py`
+
+  4. [Recompile Android export template](http://docs.godotengine.org/en/latest/reference/compiling_for_android.html#compiling-export-templates).
   
-  4. In your project goto Export->Target->Android:
+  5. In your project goto Export->Target->Android:
 
 	Options:
 		Custom Package:
