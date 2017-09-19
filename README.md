@@ -57,7 +57,7 @@ If the plugin doesn't work:
         Google Play Games Services:
             _on_gpgs_connected
             _on_gpgs_suspended
-            _on_gpgs_connection_failed
+            _on_gpgs_connection_failed(int error_code, String error_message)
         Leaderboards:
             _on_leaderboard_loaded
             _on_all_leaderboards_loaded
