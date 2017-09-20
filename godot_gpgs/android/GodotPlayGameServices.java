@@ -202,6 +202,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *
      */
     public boolean is_signed_in() {
+        logMethod();
+        
         return client.isConnected();
     }
 
@@ -276,6 +278,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void leaderboard_submit_score(String id, int score) {
         String self_name = getCurrentMethodName();
         Log.i(TAG, MODULE + ": " + self_name);
+        
+        if (!isConnectedLogged(self_name)) return;
 
         leaderboards.submitScore(id, score);
     }
@@ -304,7 +308,6 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      */
     public void leaderboard_submit_score_immediate(final String id, final int score) {
         String self_name = getCurrentMethodName();
-
         Log.i(TAG, MODULE + ": " + self_name);
 
         if (!isConnectedLogged(self_name)) return;
