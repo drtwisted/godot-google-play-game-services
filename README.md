@@ -1,4 +1,6 @@
-# Godot Google Play Services
+# Godot Google Play Games Services
+
+![alt tag](https://pp.userapi.com/c837229/v837229821/590db/jU-IlKeQn-Q.jpg "Logo")
 
 This is the Google Play Game Services module for Godot Engine (https://github.com/okamstudio/godot)
 - Android only
