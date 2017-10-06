@@ -65,7 +65,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
                "achievement_reveal", "achievement_reveal_immediate",
                "achievement_increment", "achievement_increment_immediate",
                "achievement_show_list",
-           
+
                "get_player_id", "get_player_display_name",
                "get_player_title", "get_player_current_level_number",
                "get_player_icon_image_uri"});
