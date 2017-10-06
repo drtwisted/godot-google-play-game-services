@@ -83,7 +83,7 @@ If the plugin doesn't work:
  @param int instance_id Godot app reference, can be obtained with GDScript's get_intance_ID()
  
  Usage:
-      gpgs = Globals.get_singleton("GodotPlayGamesService")
+      gpgs = Globals.get_singleton("GodotPlayGameService")
       gpgs.init(get_instance_ID())
 """
 init(instance_id) 
@@ -474,7 +474,7 @@ get_player_icon_image_uri()
  
  Usage:
  
-      var player_level_number = gpgs.get_player_cureent_level_number()
+      var player_level_number = gpgs.get_player_current_level_number()
 """
 get_player_current_level_number() 
 
