@@ -50,432 +50,90 @@ If the plugin doesn't work:
   - Scroll down to the bottom of the page to section `API Console project` and follow the link with your app name
   - Click `ENABLE APIS AND SERVICES` find Drive API and enable it
 
-## API reference
-```python
-"""            CALLBACK EVENTS
-        
-        NOTE: All data-changing events are invoked on calling *_immediate methods
+# [API reference]
 
-        Google Play Games Services:
-            _on_gpgs_connected
-            _on_gpgs_suspended
-            _on_gpgs_connection_failed(int error_code, String error_message)
-        Leaderboards:
-            _on_leaderboard_loaded
-            _on_all_leaderboards_loaded
-            _on_leaderboard_score_submitted(String leaderboard_id, int score, String status) [*_immediate]
+<h3 align="center">:GENERAL:</h3>
+#### Methods
+* **NOTE:** debug mode logs method calls and sensitive data, such as ids, use with caution
 
-        Achievements:
-            _on_achievements_loaded
-            _on_achievement_unlocked(String achievement_id, String status) [*_immediate]
-            _on_achievement_revealed(String achievement_id, String status) [*_immediate]
-            _on_achievement_incremented(String achievement_id, int increment_ammount, String status) [*_immediate]
+| Method name | Parameters | Returns | Description |
+|-|-|-|-|
+|**init**(instance_id)|*int* **instance_id** -- Godot app reference, can be obtained with GDScript's get_intance_ID() | - | Initialize GoogleApiClient |
+|**init_with_debug**(instance_id)|*int* **instance_id** -- Godot app reference, can be obtained with GDScript's get_intance_ID() | - | Initialize GoogleApiClient with debug mode enabled |
+|**set_debug**(state)| *bool* **state** | - | Change debug logging state during runtime |
 
 
-"""
 
-##############
-# CONNECTION #
-##############
+<h3 align="center">:CONNECTION:</h3>
+#### Methods
+| Method name | Parameters | Returns | Description |
+|-|-|-|-|
+|**sign_in**()| - | - | Sign in to Google (Play Games) Services |
+|**sign_out**()| - | - |  Sign out of Google (Play Games) Services (technically the same as disconnect) |
+|**disconnect**()| - | - |  Disconnect client of Google (Play Games) Services |
+|**reconnect**()| - | - |  Try to reconnect if connection is lost to Google (Play Games) Services |
+|**is_signed_in**()| - | *bool* | Get connection status |
 
-"""
- Initialize GoogleApiClient
- @param int instance_id Godot app reference, can be obtained with GDScript's get_intance_ID()
- 
- Usage:
-      gpgs = Globals.get_singleton("GodotPlayGameService")
-      gpgs.init(get_instance_ID())
-"""
-init(instance_id) 
-
-"""
- Sign in to Google (Play Games) Services
- 
- Usage:
-      gpgs.sign_in()
-"""
-sign_in() 
+#### Callback events
+| Callback name | Parameters | Returns | Description |
+|-|-|-|-|
+|**_on_gpgs_connected**()| - | - | Callback on successful connection |
+|**_on_gpgs_suspended**()| - | - |  Callback on connection suspended |
+|**_on_gpgs_connection_failed**(error_code, error_message)| *int* **error_code**; *String* **error_message** | - |  Callback on connection failed |
 
 
-"""
- Sign out of Google (Play Games) Services
- (technically the same as disconnect)
- 
- Usage:
-      gpgs.sign_out()
-"""
-sign_out() 
 
 
-"""
- Disconnect client of Google (Play Games) Services
- 
- Usage:
-      gpgs.disconnect()
-"""
-disconnect() 
+<h3 align="center">:LEADERBOARDS:</h3>
+#### Methods
+| Method name | Parameters | Returns | Description |
+|-|-|-|-|
+|**leaderboard_show_all_leaderboards**()| - | - | Show the list of leaderboards for your game |
+|**leaderboard_show**(leaderbaord_id)| *String* **leaderbaord_id** -- leaderboard id obtained from your Developer Console | - |  Show leaderboard with specified id |
+|**leaderboard_show_with_time_span**(id, time_span)| *String* **leaderbaord_id** -- leaderboard id obtained from your Developer Console; *int* **time_span** | - | Show leaderboard with specific id and a custom time span. Time span can be: 0 - DAILY, 1 - WEEKLY, 2 - ALL TIME |
+|**leaderboard_submit_score**(leaderboard_id, score)| *String* **leaderboard_id** -- leaderboard id obtained from your Developer Console; *int* **score** -- score number the player earned | - | Submit a given score to the specified leaderboard |
+|**leaderboard_submit_score_immediate**(leaderboard_id, score)| *String* **leaderboard_id** -- leaderboard id obtained from your Developer Console; *int* **score** -- score number the player earned | - |  Submit a given score to the specified leaderboard immediately with a callback result |
 
-"""
- Try to reconnect if connection is lost to Google (Play Games) Services
- 
- Usage:
-      gpgs.reconnect()
-"""
-reconnect() 
-
-
-"""
- Get connection status
- 
- Usage:
- 
-      if gpgs.is_signed_in():
-          //Do stuff
- 
-"""
-is_signed_in()
-
-"""
- Callback on successful connection
-"""
-_on_gpgs_connected()
-
-"""
- Callback on connection suspended
-"""
-_on_gpgs_suspended()
-
-"""
- Callback on connection failed
- @param int error_code
- @param String error_message
-"""
-_on_gpgs_connection_failed(error_code, error_message)
+#### Callback events
+| Callback name | Parameters | Returns | Description |
+|-|-|-|-|
+|**_on_leaderboard_score_submitted**(leaderboard_id, score, status)| *String* **leaderboard_id** -- leaderboard id obtained from your Developer Console; *int* **score** -- score number the player earned; *String* **status** -- status returned. "STATUS_OK" in case of success | - |  Callback on leaderboard_score_submitted_immediate |
 
 
-################
-# LEADERBOARDS #
-################
-
-"""
- Show the list of leaderboards for your game
- 
- Usage:
-      gpgs.leaderboard_show_all_leaderboards()
-"""
-leaderboard_show_all_leaderboards() 
 
 
-"""
- Show leaderboard with specified id
- @param String id  leaderboard id obtained from your Developer Console
- 
- Usage:
-      var leaderboard_id = "exampleLeaderbord123ID"
-      gpgs.leaderboard_show(leaderbaord_id)
-"""
-leaderboard_show(id) 
+<h3 align="center">:ACHIEVEMNTS:</h3>
+#### Methods
+| Method name | Parameters | Returns | Description |
+|-|-|-|-|
+|**achievement_show_list**()| - | - | Show achievements list |
+|**achievement_unlock**(achievement_id)| *String* **achievement_id** -- achievement id obtained from your Developer Console | - |  Unlock an achievement with a given id |
+|**achievement_unlock_immediate**(achievement_id)| *String* **achievement_id** -- achievement id obtained from your Developer Console | - | Unlock an achievement with a given id immediately with a callback result |
+|**achievement_reveal**(achievement_id)| *String* **achievement_id** -- achievement id obtained from your Developer Console | - | Reveal a hidden achievement with a given id |
+|**achievement_reveal_immediate**(achievement_id)| *String* **achievement_id** -- achievement id obtained from your Developer Console | - | Reveal a hidden achievement with a given id immediately with a callback result |
+|**achievement_increment**(achievement_id, increment_amount)| *String* **achievement_id** -- achievement_id achievement id obtained from your Developer Console; *int* **increment_amount** -- ammount of points to increment the achievement by | - | Increment an achievement with a given id by a given amount of points |
+|**achievement_increment_immediate**(achievement_id, increment_amount)| *String* **achievement_id** -- achievement_id achievement id obtained from your Developer Console; *int* **increment_amount** -- ammount of points to increment the achievement by | - | Increment an achievement with a given id by a given amount of points immediately with a callback result |
+
+#### Callback events
+| Callback name | Parameters | Returns | Description |
+|-|-|-|-|
+|**_on_achievements_loaded**()| - | - | Callback on achievements list loaded |
+|**_on_achievement_unlocked**()| *String* **achievement_id** -- achievement_id achievement id obtained from your Developer Console; *String* **status** -- status returned. "STATUS_OK" in case of success| - | Callback on achievement unlocked (immediate) |
+|**_on_achievement_revealed**()| *String* **achievement_id** -- achievement_id achievement id obtained from your Developer Console; *String* **status** -- status returned. "STATUS_OK" in case of success| - | Callback on achievement revealed (immediate) |
+|**_on_achievement_incremented**()| *String* **achievement_id** -- achievement_id achievement id obtained from your Developer Console; *int* **increment_amount** -- increment_amount ammount of points to increment the achievement by; *String* **status** -- status returned. "STATUS_OK" in case of success| - | Callback on achievement unlocked (immediate) |
 
 
-"""
- Show leaderboard with specific id and a custom time span
- @param String id leaderboard id obtained from your Developer Console
- @param int timeSpan 0 - DAILY, 1 - WEEKLY, 2 - ALL TIME
-                 (com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_*)
- 
- Usage:
-      enumDAILY, WEEKLY, ALL_TIME}
-      var leaderboard_id = "exampleLeaderbord123ID"
- 
-      ...
- 
-      gpgs.leaderboard_show_with_time_span(leaderboard_id, WEEKLY)
-"""
-leaderboard_show_with_time_span(id, timeSpan) 
 
 
-"""
- Submit a given score to the specified leaderboard
- @param String id leaderboard id obtained from your Developer Console
- @param int score score number the player earned
- 
- Usage:
-      var leaderboard_id = "exampleLeaderbord123ID"
- 
-      gpgs.leaderboard_submit_score(leaderboard_id, 9001)
-"""
-leaderboard_submit_score(id, score) 
+<h3 align="center">:PLAYER INFO:</h3>
+#### Methods
+* **NOTE:** If player info failed to load then every method will return an empty string
 
-
-"""
- Submit a given score to the specified leaderboard immediately
- with a callback result
- @param String id leaderboard id obtained from your Developer Console
- @param int score score number the player earned
- 
- Usage:
-      const ST_OK = "STATUS_OK"
-      var leaderboard_id = "exampleLeaderbord123ID"
- 
-      ...
- 
-      gpgs.leaderboard_submit_score_immediate(leaderboard_id, 9001)
- 
-      ...
- 
-      _on_leaderboard_score_submitted(id, score, status):
-          if status == ST_OK:
-              //succeeded action
-          else:
-              //failed action
-"""
-leaderboard_submit_score_immediate(id, score) 
-
-"""
- Callback on leaderboard loaded
-"""
-_on_leaderboard_loaded
-
-"""
- Callback on all leaderboards list loaded
-"""
-_on_all_leaderboards_loaded
-
-"""
- Callback on leaderboard_score_submitted_immediate
- @param String leaderboard_id
- @param int score
- @param String status returned status "STATUS_OK" in case of success
-"""
-_on_leaderboard_score_submitted(leaderboard_id, score, status)
-
-
-###############
-# ACHIEVEMNTS #
-###############
-
-"""
- Unlock an achievement with a given id
- 
- @param String achievement_id achievement id obtained from your Developer Console
- 
- Usage:
-      var achievement_toasty = "achievemnt123ID"
-      gpgs.achievement_unlock(achievement_toasty)
-"""
-achievement_unlock(achievement_id) 
-
-"""
- Unlock an achievement with a given id immediately
- with a callback result
- 
- @param String achievement_id achievement id obtained from your Developer Console
- 
- Usage:
-      const ST_OK = "STATUS_OK"
-      var achievement_toasty = "achievemnt123ID"
- 
-      ...
- 
-      gpgs.achievement_unlock_immediate(achievement_toasty)
- 
- 
-      ...
- 
-      _on_achievement_unlocked(id, status):
-          if status == ST_OK:
-              //succeeded action
-          else:
-              //failed action
-"""
-achievement_unlock_immediate(achievement_id) 
-
-
-"""
- Reveal a hidden achievement with a given id
- 
- @param String achievement_id achievement id obtained from your Developer Console
- 
- Usage:
-      var achievement_toasty = "achievemnt123ID"
- 
-      gpgs.achievement_reveal(achievement_toasty)
-"""
-achievement_reveal(achievement_id) 
-
-
-"""
- Reveal a hidden achievement with a given id immediately
- with a callback result
- 
- @param String achievement_id achievement id obtained from your Developer Console
- 
- Usage:
-      const ST_OK = "STATUS_OK"
-      var achievement_toasty = "achievemnt123ID"
- 
-      ...
- 
-      gpgs.achievement_reveal_immediate(achievement_toasty)
- 
-      ....
- 
-      _on_achievement_revealed(id, status):
-          if status == ST_OK:
-              //succeeded action
-          else:
-              //failed action
-"""
-achievement_reveal_immediate(achievement_id) 
-
-
-"""
- Increment an achievement with a given id by a given amount of points
- 
- @param String achievement_id achievement id obtained from your Developer Console
- @param int increment_amount ammount of points to increment the achievement by
- 
- Usage:
-      var achievement_toasty = "achievemnt123ID"
- 
-      gpgs.achievement_increment(achievement_toasty, 5)
-"""
-achievement_increment(achievement_id, increment_amount)
-
-
-"""
- Increment an achievement with a given id by a given amount of points immediately
- with a callback result
- 
- @param String achievement_id achievement id obtained from your Developer Console
- @param int increment_amount ammount of points to increment the achievement by
- 
- Usage:
-      const ST_OK = "STATUS_OK"
-      var achievement_toasty = "achievemnt123ID"
- 
-      ...
- 
-      gpgs.achievement_reveal_immediate(achievement_toasty)
- 
-      ....
- 
-      _on_achievement_revealed(id, increment_amount, status):
-          if status == ST_OK:
-              //succeeded action
-          else:
-              //failed action
-"""
-achievement_increment_immediate(achievement_id, increment_amount) 
-
-
-"""
- Show achievements list
- 
- Usage:
- 
-      gpgs.achievement_show_list()
-"""
-achievement_show_list() 
-
-"""
- Callback on achievements list loaded
-"""
-_on_achievements_loaded
-
-"""
- Callback on achievement unlocked (immediate)
- @param String achievement_id
- @param String status returned status "STATUS_OK" in case of success
-"""
-_on_achievement_unlocked(achievement_id, status)
-
-"""
- Callback on achievement revealed (immediate)
- @param String achievement_id
- @param String status returned status "STATUS_OK" in case of success
-"""
-_on_achievement_revealed(achievement_id, status)
-
-"""
- Callback on achievement incremented (immediate)
- @param String achievement_id
- @param int increment_ammount
- @param String status returned status "STATUS_OK" in case of success
-"""
-_on_achievement_incremented(achievement_id, increment_ammount, status)
-
-
-###############
-# PLAYER INFO #
-###############
-
-"""
- Update player info from Google Play Game Services
- 
- Usage:
- 
-      gpgs.update_player_info()
-"""
-update_player_info() 
-
-
-"""
- Get player ID if player info is loaded
- 
- @return String user id or an empty string
- 
- Usage:
- 
-      var player_id = gpgs.get_player_id()
-"""
-get_player_id() 
-
-
-"""
- Get a player Display Name if player info is loaded
- 
- @return String display name or an empty string
- 
- Usage:
- 
-      var player_display_name = gpgs.get_player_display_name()
-"""
-get_player_display_name() 
-
-
-"""
- Get player Title if player info is loaded
- 
- @return String title or an empty string
- 
- Usage:
- 
-      var player_title = gpgs.get_player_title()
-"""
-get_player_title() 
-
-"""
- Get URI of Player's Icon Image if player info is loaded
- 
- @return String URI of Player's Icon Image or an empty string
- 
- Usage:
- 
-      var player_icon_image_uri = gpgs.get_player_icon_image_uri()
-"""
-get_player_icon_image_uri() 
-
-
-"""
- Get Player's Current Level if player info is loaded
- 
- @return int current level number or -1
- 
- Usage:
- 
-      var player_level_number = gpgs.get_player_current_level_number()
-"""
-get_player_current_level_number() 
-
-```
+| Method name | Parameters | Returns | Description |
+|-|-|-|-|
+|**update_player_info**()| - | - | Update/download player info data from Google Play Game Services |
+|**get_player_id**()| - | *String* **player_id** |  Get player ID |
+|**get_player_display_name**()| - | *String* **player_display_name** -- e.g. Ed Boon | Get a player Display Name |
+|**get_player_title**()|- | *String* **player_title** -- e.g. n00b | Get player Title |
+|**get_player_icon_image_uri**()| - | *String* **player_icon_image_uri** | Get URI of Player's Icon Image if player info is loaded  |
+|**get_player_current_level_number**()| - | *int* **player_level_number** -- current level number or -1| Get Player's Current Level if player info is loaded |
