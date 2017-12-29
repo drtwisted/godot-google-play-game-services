@@ -53,6 +53,7 @@ If the plugin doesn't work:
 # [API reference]
 
 <h3 align="center">:GENERAL:</h3>
+
 #### Methods
 * **NOTE:** debug mode logs method calls and sensitive data, such as ids, use with caution
 
@@ -65,6 +66,7 @@ If the plugin doesn't work:
 
 
 <h3 align="center">:CONNECTION:</h3>
+
 #### Methods
 | Method name | Parameters | Returns | Description |
 |-|-|-|-|
@@ -85,6 +87,7 @@ If the plugin doesn't work:
 
 
 <h3 align="center">:LEADERBOARDS:</h3>
+
 #### Methods
 | Method name | Parameters | Returns | Description |
 |-|-|-|-|
@@ -103,6 +106,7 @@ If the plugin doesn't work:
 
 
 <h3 align="center">:ACHIEVEMNTS:</h3>
+
 #### Methods
 | Method name | Parameters | Returns | Description |
 |-|-|-|-|
@@ -126,6 +130,7 @@ If the plugin doesn't work:
 
 
 <h3 align="center">:PLAYER INFO:</h3>
+
 #### Methods
 * **NOTE:** If player info failed to load then every method will return an empty string
 
