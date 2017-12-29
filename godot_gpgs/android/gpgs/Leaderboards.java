@@ -2,7 +2,6 @@ package org.godotengine.godot.gpgs;
 
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
@@ -17,8 +16,9 @@ public class Leaderboards extends GPGSComponent {
     public static final int TIME_SPAN_WEEKLY = 1;
     public static final int TIME_SPAN_ALL_TIME = 2;
 
-    public Leaderboards(Client client, Activity activity, String tag, String module) {
-        super(client, activity, tag, module);
+    public Leaderboards(
+        Client client, Activity activity, String tag, String module, boolean debug) {
+        super(client, activity, tag, module, debug);
     }
 
     public void showAllLeaderboards() {
@@ -29,7 +29,7 @@ public class Leaderboards extends GPGSComponent {
                         Games.Leaderboards.getAllLeaderboardsIntent(
                                 getClient().getGoogleApiClient()),
                         REQUEST_ALL_LEADERBOARDS);
-                Log.d(TAG, MODULE + ": requesting all leaderboards");
+                debugLog("requesting all leaderboards");
             }
         });
     }
@@ -42,7 +42,7 @@ public class Leaderboards extends GPGSComponent {
                         Games.Leaderboards.getLeaderboardIntent(
                                 getClient().getGoogleApiClient(), leaderboard_id),
                         REQUEST_LEADERBOARD);
-                Log.d(TAG, MODULE + ": requesting leaderboard ID " + leaderboard_id);
+                debugLog("requesting leaderboard ID " + leaderboard_id);
             }
         });
     }
@@ -55,7 +55,7 @@ public class Leaderboards extends GPGSComponent {
                         Games.Leaderboards.getLeaderboardIntent(
                                 getClient().getGoogleApiClient(), leaderboard_id, timeSpan),
                         REQUEST_LEADERBOARD);
-                Log.d(TAG, MODULE + ": requesting leaderboard ID " + leaderboard_id + " with timeSpan=" + timeSpan);
+                debugLog("requesting leaderboard ID " + leaderboard_id + " with timeSpan=" + timeSpan);
             }
         });
     }
@@ -66,7 +66,7 @@ public class Leaderboards extends GPGSComponent {
             public void run() {
                 Games.Leaderboards.submitScore(
                         getClient().getGoogleApiClient(), leaderboard_id, score);
-                Log.d(TAG, MODULE + ": submitting score value " + String.valueOf(score) + " for leaderboard ID " + leaderboard_id);
+                debugLog("submitting score value " + String.valueOf(score) + " for leaderboard ID " + leaderboard_id);
             }
         });
     }
@@ -79,7 +79,7 @@ public class Leaderboards extends GPGSComponent {
                 Games.Leaderboards.submitScoreImmediate(
                         getClient().getGoogleApiClient(),
                         leaderboard_id, score).setResultCallback(resultCallback);
-                Log.d(TAG, MODULE + ": submitting score value " + String.valueOf(score) + " for leaderboard ID " + leaderboard_id);
+                debugLog("submitting score value " + String.valueOf(score) + " for leaderboard ID " + leaderboard_id);
             }
         });
     }

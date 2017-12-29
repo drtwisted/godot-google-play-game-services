@@ -35,8 +35,9 @@ public class Client extends GPGSEntity
         return googleApiClient;
     }
 
-    public Client(GodotPlayGameServices parent, Activity activity, String tag, String module) {
-        super(activity, tag, module);
+    public Client(
+        GodotPlayGameServices parent, Activity activity, String tag, String module, boolean debug) {
+        super(activity, tag, module, debug);
         this.parent = parent;
     }
 
@@ -46,7 +47,7 @@ public class Client extends GPGSEntity
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, MODULE + ": Client.init : initializing Google Play Game Services...");
+                debugLog("Client.init : initializing Google Play Game Services...");
                 googleApiClient = new GoogleApiClient.Builder(getActivity())
                         .addConnectionCallbacks(thisReference)
                         .addOnConnectionFailedListener(thisReference)
@@ -62,7 +63,7 @@ public class Client extends GPGSEntity
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, MODULE + ": Client.connect : connecting to Google Play Game Services...");
+                debugLog("Client.connect : connecting to Google Play Game Services...");
 
                 googleApiClient.connect();
             }
@@ -75,7 +76,7 @@ public class Client extends GPGSEntity
             public void run() {
                 if(!googleApiClient.isConnected()) return;
 
-                Log.i(TAG, MODULE + ": Client.reconnect : disconnecting from Google Play Game Services...");
+                debugLog("Client.reconnect : disconnecting from Google Play Game Services...");
 
                 Games.signOut(googleApiClient);
                 googleApiClient.disconnect();
@@ -89,7 +90,7 @@ public class Client extends GPGSEntity
             public void run() {
                 if (googleApiClient.isConnected()) return;
 
-                Log.i(TAG, MODULE + ": Client.reconnect : reconnecting to Google Play Game Services...");
+                debugLog("Client.reconnect : reconnecting to Google Play Game Services...");
 
                 googleApiClient.connect();
             }
@@ -101,9 +102,13 @@ public class Client extends GPGSEntity
         return googleApiClient.isConnected();
     }
 
+    public boolean isConnecting() {
+        return googleApiClient.isConnecting();
+    }
+    
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, MODULE + ": onConnected");
+        debugLog("onConnected");
 
         parent.onConnected();
 
@@ -114,7 +119,7 @@ public class Client extends GPGSEntity
 
     @Override
     public void onConnectionSuspended(int cause) {
-        Log.i(TAG, MODULE + ": onConnectionSuspended int cause " + String.valueOf(cause));
+        debugLog("onConnectionSuspended int cause " + String.valueOf(cause));
         GodotLib.calldeferred(parent.getInstanceID(), "_on_gpgs_suspended", new Object[] { cause });
     }
 
@@ -134,7 +139,7 @@ public class Client extends GPGSEntity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         if (isResolvingConnectionFailure) {
-            Log.i(TAG, MODULE + ": onConnectionFailed RESOLVING result code: " + String.valueOf(connectionResult));
+            debugLog("onConnectionFailed RESOLVING result code: " + String.valueOf(connectionResult));
             return;
         }
 
@@ -157,6 +162,6 @@ public class Client extends GPGSEntity
 
         GodotLib.calldeferred(parent.getInstanceID(), "_on_gpgs_connection_failed", new Object[] {
             connectionResult.getErrorCode(), connectionResult.getErrorMessage() });
-        Log.i(TAG, MODULE + ": onConnectionFailed result : " + String.valueOf(connectionResult));
+        debugLog("onConnectionFailed result : " + String.valueOf(connectionResult));
     }
 }

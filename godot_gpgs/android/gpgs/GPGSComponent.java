@@ -14,8 +14,9 @@ public class GPGSComponent extends GPGSEntity {
         return client;
     }
 
-    GPGSComponent(Client client, Activity activity, String tag, String module) {
-        super(activity, tag, module);
+    GPGSComponent(
+        Client client, Activity activity, String tag, String module, boolean debug) {
+        super(activity, tag, module, debug);
         this.client = client;
     }
 }

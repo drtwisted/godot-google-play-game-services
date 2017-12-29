@@ -1,7 +1,6 @@
 package org.godotengine.godot.gpgs;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
@@ -11,8 +10,8 @@ public class Achievements extends GPGSComponent {
     public static final int REQUEST_ACHIEVEMENTS = 2002;
 
 
-    public Achievements(Client client, Activity activity, String tag, String module) {
-        super(client, activity, tag, module);
+    public Achievements(Client client, Activity activity, String tag, String module, boolean debug) {
+        super(client, activity, tag, module, debug);
     }
 
      public void showList() {
@@ -22,7 +21,7 @@ public class Achievements extends GPGSComponent {
                  getActivity().startActivityForResult(
                          Games.Achievements.getAchievementsIntent(getClient().getGoogleApiClient()),
                          REQUEST_ACHIEVEMENTS);
-                 Log.d(TAG, MODULE + ": show achievements list");
+                 debugLog("show achievements list");
              }
          });
      }
@@ -32,7 +31,7 @@ public class Achievements extends GPGSComponent {
             @Override
             public void run() {
                 Games.Achievements.unlock(getClient().getGoogleApiClient(), achievement_id);
-                Log.d(TAG, MODULE + ": unlock achievement ID " + String.valueOf(achievement_id));
+                debugLog("unlock achievement ID " + String.valueOf(achievement_id));
             }
         });
     }
@@ -45,7 +44,7 @@ public class Achievements extends GPGSComponent {
                 Games.Achievements.unlockImmediate(
                         getClient().getGoogleApiClient(),
                         achievement_id).setResultCallback(resultCallback);
-                Log.d(TAG, MODULE + ": unlock achievement ID " + String.valueOf(achievement_id));
+                debugLog("unlock achievement ID " + String.valueOf(achievement_id));
             }
         });
     }
@@ -55,7 +54,7 @@ public class Achievements extends GPGSComponent {
             @Override
             public void run() {
                 Games.Achievements.reveal(getClient().getGoogleApiClient(), achievement_id);
-                Log.d(TAG, MODULE + ": reveal achievement ID " + String.valueOf(achievement_id));
+                debugLog("reveal achievement ID " + String.valueOf(achievement_id));
             }
         });
     }
@@ -68,7 +67,7 @@ public class Achievements extends GPGSComponent {
                 Games.Achievements.revealImmediate(
                         getClient().getGoogleApiClient(),
                         achievement_id).setResultCallback(resultCallback);
-                Log.d(TAG, MODULE + ": reveal achievement ID " + String.valueOf(achievement_id));
+                debugLog("reveal achievement ID " + String.valueOf(achievement_id));
             }
         });
     }
@@ -79,7 +78,7 @@ public class Achievements extends GPGSComponent {
             public void run() {
                 Games.Achievements.increment(
                         getClient().getGoogleApiClient(), achievement_id, increment_amount);
-                Log.d(TAG, MODULE + ": increment achievement ID " + String.valueOf(achievement_id)
+                debugLog("increment achievement ID " + String.valueOf(achievement_id)
                                 + " by " + String.valueOf(increment_amount));
             }
         });
@@ -93,7 +92,7 @@ public class Achievements extends GPGSComponent {
                 Games.Achievements.incrementImmediate(
                         getClient().getGoogleApiClient(),
                         achievement_id, increment_amount).setResultCallback(resultCallback);
-                Log.d(TAG, MODULE + ": increment achievement ID " + String.valueOf(achievement_id)
+                debugLog("increment achievement ID " + String.valueOf(achievement_id)
                                 + " by " + String.valueOf(increment_amount));
             }
         });

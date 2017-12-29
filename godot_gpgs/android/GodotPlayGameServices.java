@@ -30,6 +30,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
 
     private static GodotPlayGameServices singletonReference;
 
+    private boolean debug;
     private int instance_id;
     private Activity activity; 
 
@@ -54,21 +55,23 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
        this.activity = activity;
 
        registerClass(MODULE, new String[] {
-               "init",
-               "sign_in", "sign_out", "reconnect", "disconnect", "is_signed_in",
+                "set_debug",
+                "init", "init_with_debug",
+                "sign_in", "sign_out", "reconnect", "disconnect",
+                "is_signing_in", "is_signed_in",
 
-               "leaderboard_submit_score", "leaderboard_submit_score_immediate",
-               "leaderboard_show_all_leaderboards",
-               "leaderboard_show", "leaderboard_show_with_time_span",
+                "leaderboard_submit_score", "leaderboard_submit_score_immediate",
+                "leaderboard_show_all_leaderboards",
+                "leaderboard_show", "leaderboard_show_with_time_span",
 
-               "achievement_unlock", "achievement_unlock_immediate",
-               "achievement_reveal", "achievement_reveal_immediate",
-               "achievement_increment", "achievement_increment_immediate",
-               "achievement_show_list",
+                "achievement_unlock", "achievement_unlock_immediate",
+                "achievement_reveal", "achievement_reveal_immediate",
+                "achievement_increment", "achievement_increment_immediate",
+                "achievement_show_list",
            
-               "get_player_id", "get_player_display_name",
-               "get_player_title", "get_player_current_level_number",
-               "get_player_icon_image_uri"});
+                "get_player_id", "get_player_display_name",
+                "get_player_title", "get_player_current_level_number",
+                "get_player_icon_image_uri"});
        
        /*             CALLBACK EVENTS
         
@@ -96,8 +99,11 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
         disconnect();
     }
 
-    private boolean isConnectedLogged(@Nullable String methodName) {
-        if (!client.isConnected()) Log.w(TAG, MODULE + ": not signed in when calling " + methodName);
+    private boolean isConnectedLogged() {
+        if (!client.isConnected() && debug) {
+            Log.w(TAG,
+                MODULE + ": not signed in when calling " + Thread.currentThread().getStackTrace()[4]);
+        }
 
         return client.isConnected();
     }
@@ -107,19 +113,67 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     }
 
     private void logMethod() {
+        if (!debug) return;
+        
         String self_name = Thread.currentThread().getStackTrace()[4].getMethodName();
         Log.i(TAG, MODULE + ": " + self_name);
     }
 
+    private void debugLog(String message) {
+        if (debug) Log.d(TAG, MODULE + ": " + message);
+    }
 
     private String extractStatusNameFromStatus(String status) {
         return status.split(",", 2)[0].split("=", 2)[1];
     }
 
+    private void initClient() {
+        if (client != null) return;
+        
+        client = new Client(this, activity, TAG, MODULE, debug);
+        client.init();
+        player = new PlayerInfo(client, activity, TAG, MODULE, debug);
+        leaderboards = new org.godotengine.godot.gpgs.Leaderboards(
+                client, activity, TAG, MODULE, debug);
+        achievements = new org.godotengine.godot.gpgs.Achievements(
+                client, activity, TAG, MODULE, debug);
+    }
+
+    private void _init(int instance_id, boolean debug) {
+        this.instance_id = instance_id;
+        this.debug = debug;
+        
+        logMethod();
+    }
+    
     /******************************************/
     /********** v EXPORTED METHODS v **********/
 
-    /* GENERAL/CONNECTION */
+    /* GENERAL */
+
+    /**
+     * Change debug logging state during runtime
+     * @param state new debug state
+     *
+     * Usage:
+     *      gpgs.set_debug(true) # Enable
+     *
+     *      # Do stuff with gpgs
+     * 
+     *      gpgs.set_debug(false)
+     */
+    public void set_debug(boolean state) {
+        if (debug == state) return;
+
+        debug = state;
+        
+        client.setDebug(debug);
+        player.setDebug(debug);
+        leaderboards.setDebug(debug);
+        achievements.setDebug(debug);
+    }
+
+    /*CONNECTION */
 
     /**
      * Initialize GoogleApiClient
@@ -131,16 +185,26 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      */
     public void init(int instance_id) {
         this.instance_id = instance_id;
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        this.debug = false;
+        
+        logMethod();
+    }
 
-        client = new Client(this, activity, TAG, MODULE);
-        client.init();
-        player = new PlayerInfo(client, activity, TAG, MODULE);
-        leaderboards = new org.godotengine.godot.gpgs.Leaderboards(
-                client, activity, TAG, MODULE);
-        achievements = new org.godotengine.godot.gpgs.Achievements(
-                client, activity, TAG, MODULE);
+    /**
+     * Initialize GoogleApiClient with debug logging enabled
+     * This includes method calls and some sensitive data, such as items IDs
+     * 
+     * @param instance_id Godot app reference, can be obtained with GDScript's get_intance_ID()
+     *
+     * Usage:
+     *      gpgs = Globals.get_singleton("GodotPlayGamesService")
+     *      gpgs.init_with_debug(get_instance_ID())
+     */
+    public void init_with_debug(int instance_id) {
+        this.instance_id = instance_id;
+        this.debug = true;
+        
+        logMethod();
     }
 
     /**
@@ -152,9 +216,11 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void sign_in() {
         logMethod();
 
+        initClient();
+
         client.connect();
 
-        Log.i(TAG, MODULE + ": signing in to Google Play Game Services...");
+        //Log.i(TAG, MODULE + ": signing in to Google Play Game Services...");
     }
 
     /**
@@ -169,7 +235,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
 
         disconnect();
 
-        Log.i(TAG, MODULE + ": signing out of Google Play Game Services...");
+        //Log.i(TAG, MODULE + ": signing out of Google Play Game Services...");
     }
 
     /**
@@ -211,6 +277,21 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
         return client.isConnected();
     }
 
+    /**
+     * Get connection status
+     *
+     * Usage:
+     *
+     *      if gpgs.is_signed_in():
+     *          //Do stuff
+     *
+     */
+    public boolean is_signing_in() {
+        logMethod();
+        
+        return client.isConnecting();
+    }
+
     /* LEADERBOARD */
 
     /**
@@ -220,10 +301,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.leaderboard_show_all_leaderboards()
      */
     public void leaderboard_show_all_leaderboards() {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if (!isConnectedLogged(self_name)) return;
+        if (!isConnectedLogged()) return;
 
         leaderboards.showAllLeaderboards();
     }
@@ -238,10 +318,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.leaderboard_show(leaderbaord_id)
      */
     public void leaderboard_show(String id) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if (!isConnectedLogged(self_name)) return;
+        if (!isConnectedLogged()) return;
 
         leaderboards.show(id);
     }
@@ -261,10 +340,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.leaderboard_show_with_time_span(leaderboard_id, WEEKLY)
      */
     public void leaderboard_show_with_time_span(String id, int timeSpan) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if (!isConnectedLogged(self_name)) return;
+        if (!isConnectedLogged()) return;
 
         leaderboards.showWithTimeSpan(id, timeSpan);
     }
@@ -280,10 +358,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.leaderboard_submit_score(leaderboard_id, 9001)
      */
     public void leaderboard_submit_score(String id, int score) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
         
-        if (!isConnectedLogged(self_name)) return;
+        if (!isConnectedLogged()) return;
 
         leaderboards.submitScore(id, score);
     }
@@ -311,11 +388,12 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *              //failed action
      */
     public void leaderboard_submit_score_immediate(final String id, final int score) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if (!isConnectedLogged(self_name)) return;
+        if (!isConnectedLogged()) return;
 
+        final boolean debug = this.debug;
+        
         leaderboards.submitScoreImmediate(
                 id, score, new ResultCallback<Leaderboards.SubmitScoreResult>() {
                     @Override
@@ -323,7 +401,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
                         String status = extractStatusNameFromStatus(
                                 submitScoreResult.getStatus().toString());
 
-                        Log.d(TAG, MODULE
+                        if (debug) Log.d(TAG, MODULE
                                 + ": > tried to submit score value " + String.valueOf(score)
                                 + " with " + status);
 
@@ -347,10 +425,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.achievement_unlock(achievement_toasty)
      */
     public void achievement_unlock(String achievement_id) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if(!isConnectedLogged(self_name)) return;
+        if(!isConnectedLogged()) return;
 
         achievements.unlock(achievement_id);
     }
@@ -379,10 +456,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *              //failed action
      */
     public void achievement_unlock_immediate(final String achievement_id) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if(!isConnectedLogged(self_name)) return;
+        if(!isConnectedLogged()) return;
 
         achievements.unlockImmediate(
                 achievement_id,
@@ -415,10 +491,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.achievement_reveal(achievement_toasty)
      */
     public void achievement_reveal(final String achievement_id) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if (!isConnectedLogged(self_name)) return;
+        if (!isConnectedLogged()) return;
 
         achievements.reveal(achievement_id);
     }
@@ -446,10 +521,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *              //failed action
      */
     public void achievement_reveal_immediate(final String achievement_id) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if (!isConnectedLogged(self_name)) return;
+        if (!isConnectedLogged()) return;
 
         achievements.revealImmediate(
                 achievement_id,
@@ -482,10 +556,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.achievement_increment(achievement_toasty, 5)
      */
     public void achievement_increment(String achievement_id, int increment_amount) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if(!isConnectedLogged(self_name)) return;
+        if(!isConnectedLogged()) return;
 
         achievements.increment(achievement_id, increment_amount);
     }
@@ -514,10 +587,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *              //failed action
      */
     public void achievement_increment_immediate(final String achievement_id, final int increment_amount) {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if(!isConnectedLogged(self_name)) return;
+        if(!isConnectedLogged()) return;
 
         achievements.incrementImmediate(
                 achievement_id, increment_amount,
@@ -548,10 +620,9 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.achievement_show_list()
      */
     public void achievement_show_list() {
-        String self_name = getCurrentMethodName();
-        Log.i(TAG, MODULE + ": " + self_name);
+        logMethod();
 
-        if(!isConnectedLogged(self_name)) return;
+        if(!isConnectedLogged()) return;
 
         achievements.showList();
     }
@@ -661,18 +732,21 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
 
             case REQUEST_ALL_LEADERBOARDS:
                 if (resultCode == Activity.RESULT_OK) {
+                    debugLog("leaderboards list loaded");
                     GodotLib.calldeferred(instance_id, "_on_all_leaderboards_loaded", new Object[] { });
                 }
             break;
 
             case REQUEST_LEADERBOARD:
                 if (resultCode == Activity.RESULT_OK) {
+                    debugLog("leaderboard loaded");
                     GodotLib.calldeferred(instance_id, "_on_leaderboard_loaded", new Object[] { });
                 }
             break;
 
             case REQUEST_ACHIEVEMENTS:
                 if (resultCode == Activity.RESULT_OK) {
+                    debugLog("achievments list");
                     GodotLib.calldeferred(instance_id, "_on_achievements_loaded", new Object[] { });
                 }
             break;
