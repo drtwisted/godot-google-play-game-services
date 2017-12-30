@@ -74,7 +74,9 @@ If the plugin doesn't work:
 |**sign_out**()| - | - |  Sign out of Google (Play Games) Services (technically the same as disconnect) |
 |**disconnect**()| - | - |  Disconnect client of Google (Play Games) Services |
 |**reconnect**()| - | - |  Try to reconnect if connection is lost to Google (Play Games) Services |
-|**is_signed_in**()| - | *bool* | Get connection status |
+|**is_signing_in**()| - | *bool* | Get connection status (is connecting) |
+|**is_signed_in**()| - | *bool* | Get connection status (is connected) |
+
 
 #### Callback events
 | Callback name | Parameters | Returns | Description |

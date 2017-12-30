@@ -282,7 +282,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *
      * Usage:
      *
-     *      if gpgs.is_signed_in():
+     *      if gpgs.is_signing_in():
      *          //Do stuff
      *
      */
