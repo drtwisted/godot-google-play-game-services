@@ -16,9 +16,9 @@ import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
 
-import org.godotengine.godot.BaseGameUtils;
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotPlayGameServices;
+import org.godotengine.godot.gpgs.tools.Dialogs;
 
 public class Client extends GPGSEntity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -130,8 +130,8 @@ public class Client extends GPGSEntity
             dialog.show();
         } else {
             // no built-in dialog: show the fallback error message
-            BaseGameUtils.showAlert(getActivity(),
-                    "Failed to connect to Google Play Game Services! Please check your connection" +
+            Dialogs.showSimpleAlert(getActivity().getBaseContext(),
+                    "Failed to connect to Google Play Game Services! Please check your network connection" +
                             "and/or account and try again.");
         }
     }
