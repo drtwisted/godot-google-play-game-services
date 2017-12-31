@@ -1,4 +1,4 @@
-# Godot Google Play Games Services
+# Godot Google Play Game Services
 
 ![alt tag](https://pp.userapi.com/c837229/v837229821/590db/jU-IlKeQn-Q.jpg "Logo")
 
