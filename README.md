@@ -17,7 +17,7 @@ This is the Google Play Game Services module for Godot Engine (https://github.co
 ```xml
       <meta-data 
           android:name="com.google.android.gms.games.APP_ID"
-          android:value="\ 012345678901" />
+          android:value="\012345678901" />
 ```
   NOTE: If another module has already a specified APP_ID, you should remove it (allowed only once in the manifest).
 
