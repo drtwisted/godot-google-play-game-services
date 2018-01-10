@@ -1,8 +1,12 @@
 package org.godotengine.godot.gpgs;
 
 import android.app.Activity;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 
+import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.Player;
 
@@ -79,10 +83,29 @@ public class PlayerInfo extends GPGSComponent {
         debugLog("getIconImageURI");
 
         if (isPlayerInfoAvailable() && player.hasIconImage()) {
+
             return player.getIconImageUri().toString();
         }
 
         return "";
+    }
+
+    public void loadIconImage() {
+        debugLog("loadIconImage");
+        if (isPlayerInfoAvailable() && player.hasIconImage()) {
+            final Uri requested_uri = player.getIconImageUri();
+
+            ImageManager.create(getActivity()).loadImage(new ImageManager.OnImageLoadedListener() {
+                @Override
+                public void onImageLoaded(Uri uri, Drawable drawable, boolean b) {
+                    if (uri == requested_uri) {
+//                        GodotLib.calldeferred(parent.getInstanceID(), "_on_icon_image_loaded", new Object[] {
+//                                requested_uri, ((BitmapDrawable) drawable).getBitmap()});
+                        Log.d(TAG, "");
+                    }
+                }
+            }, requested_uri);
+        }
     }
 
     public int getPlayerCurrentLevelNumber() {

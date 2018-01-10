@@ -83,6 +83,8 @@ If the plugin doesn't work:
 |-|-|-|-|
 |**_on_gpgs_connected**()| - | - | Callback on successful connection |
 |**_on_gpgs_suspended**()| - | - |  Callback on connection suspended |
+|**_on_gpgs_not_connected**()| - | - |  Callback on any operation when client is not connected |
+|**_on_gpgs_not_signed_in**()| - | - |  Callback on any operation when client is not signed in |
 |**_on_gpgs_connection_failed**(error_code, error_message)| *int* **error_code**; *String* **error_message** | - |  Callback on connection failed |
 
 

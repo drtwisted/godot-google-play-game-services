@@ -14,7 +14,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.plus.Plus;
+//import com.google.android.gms.plus.Plus;
 
 import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotPlayGameServices;
@@ -52,8 +52,8 @@ public class Client extends GPGSEntity
                         .addConnectionCallbacks(thisReference)
                         .addOnConnectionFailedListener(thisReference)
                         .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                        .addApi(Plus.API).addScope(Plus.SCOPE_PLUS_LOGIN)
-                        .addApi(Drive.API).addScope(Drive.SCOPE_APPFOLDER)
+//                        .addApi(Plus.API).addScope(Plus.SCOPE_PLUS_LOGIN)
+//                        .addApi(Drive.API).addScope(Drive.SCOPE_APPFOLDER)
                         .build();
             }
         });

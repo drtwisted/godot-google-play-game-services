@@ -28,6 +28,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     //private static final int REQUEST_LEADERBOARD = 1002;
     //private static final int REQUEST_ALL_LEADERBOARDS = 1005;
 
+    private boolean clientInitialized = false;
+
     private static GodotPlayGameServices singletonReference;
 
     private boolean debug;
@@ -100,9 +102,14 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     }
 
     private boolean isConnectedLogged() {
-        if (!client.isConnected() && debug) {
-            Log.w(TAG,
-                MODULE + ": not signed in when calling " + Thread.currentThread().getStackTrace()[4]);
+        if (!client.isConnected()) {
+            GodotLib.calldeferred(instance_id, "_on_gpgs_not_connected", new Object[] { });
+
+            if (debug) {
+                Log.w(TAG,
+                        MODULE + ": not signed in when calling " + Thread.currentThread().getStackTrace()[4]);
+            }
+
         }
 
         return client.isConnected();
@@ -110,6 +117,16 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
 
     private String getCurrentMethodName() {
         return Thread.currentThread().getStackTrace()[3].getMethodName();
+    }
+
+    private boolean isClientInitializedLogged() {
+        if (!clientInitialized) {
+            GodotLib.calldeferred(instance_id, "_on_gpgs_not_signed_in", new Object[] { });
+
+            if (debug) Log.d(TAG, MODULE + ": client is not initialized!");
+        }
+
+        return clientInitialized;
     }
 
     private void logMethod() {
@@ -137,6 +154,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
                 client, activity, TAG, MODULE, debug);
         achievements = new org.godotengine.godot.gpgs.Achievements(
                 client, activity, TAG, MODULE, debug);
+
+        clientInitialized = true;
     }
 
     private void _init(int instance_id, boolean debug) {
@@ -163,10 +182,12 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      *      gpgs.set_debug(false)
      */
     public void set_debug(boolean state) {
+        logMethod();
+
         if (debug == state) return;
 
         debug = state;
-        
+
         client.setDebug(debug);
         player.setDebug(debug);
         leaderboards.setDebug(debug);
@@ -218,6 +239,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
 
         initClient();
 
+        if (!isClientInitializedLogged()) return;
+
         client.connect();
 
         //Log.i(TAG, MODULE + ": signing in to Google Play Game Services...");
@@ -233,6 +256,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void sign_out() {
         logMethod();
 
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
+
         disconnect();
 
         //Log.i(TAG, MODULE + ": signing out of Google Play Game Services...");
@@ -247,6 +272,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void disconnect() {
         logMethod();
 
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
+
         client.disconnect();
     }
 
@@ -258,6 +285,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      */
     public void reconnect() {
         logMethod();
+
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         client.reconnect();
     }
@@ -274,7 +303,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public boolean is_signed_in() {
         logMethod();
         
-        return client.isConnected();
+        return clientInitialized && client.isConnected();
     }
 
     /**
@@ -289,7 +318,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public boolean is_signing_in() {
         logMethod();
         
-        return client.isConnecting();
+        return clientInitialized && client.isConnecting();
     }
 
     /* LEADERBOARD */
@@ -303,7 +332,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void leaderboard_show_all_leaderboards() {
         logMethod();
 
-        if (!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         leaderboards.showAllLeaderboards();
     }
@@ -320,7 +349,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void leaderboard_show(String id) {
         logMethod();
 
-        if (!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         leaderboards.show(id);
     }
@@ -342,7 +371,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void leaderboard_show_with_time_span(String id, int timeSpan) {
         logMethod();
 
-        if (!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         leaderboards.showWithTimeSpan(id, timeSpan);
     }
@@ -360,7 +389,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void leaderboard_submit_score(String id, int score) {
         logMethod();
         
-        if (!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         leaderboards.submitScore(id, score);
     }
@@ -390,7 +419,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void leaderboard_submit_score_immediate(final String id, final int score) {
         logMethod();
 
-        if (!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         final boolean debug = this.debug;
         
@@ -427,7 +456,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void achievement_unlock(String achievement_id) {
         logMethod();
 
-        if(!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         achievements.unlock(achievement_id);
     }
@@ -458,7 +487,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void achievement_unlock_immediate(final String achievement_id) {
         logMethod();
 
-        if(!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         achievements.unlockImmediate(
                 achievement_id,
@@ -493,7 +522,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void achievement_reveal(final String achievement_id) {
         logMethod();
 
-        if (!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         achievements.reveal(achievement_id);
     }
@@ -523,7 +552,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void achievement_reveal_immediate(final String achievement_id) {
         logMethod();
 
-        if (!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         achievements.revealImmediate(
                 achievement_id,
@@ -558,7 +587,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void achievement_increment(String achievement_id, int increment_amount) {
         logMethod();
 
-        if(!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         achievements.increment(achievement_id, increment_amount);
     }
@@ -589,7 +618,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void achievement_increment_immediate(final String achievement_id, final int increment_amount) {
         logMethod();
 
-        if(!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         achievements.incrementImmediate(
                 achievement_id, increment_amount,
@@ -622,7 +651,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void achievement_show_list() {
         logMethod();
 
-        if(!isConnectedLogged()) return;
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
         achievements.showList();
     }
@@ -639,6 +668,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void update_player_info() {
         logMethod();
 
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
+
         player.updatePlayerInfo();
     }
 
@@ -653,6 +684,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      */
     public String get_player_id() {
         logMethod();
+
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return "";
 
         return player.getPlayerID();
     }
@@ -669,6 +702,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public String get_player_display_name() {
         logMethod();
 
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return "";
+
         return player.getDisplayName();
     }
 
@@ -683,6 +718,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      */
     public String get_player_title() {
         logMethod();
+
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return "";
 
         return player.getTitle();
     }
@@ -699,6 +736,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public String get_player_icon_image_uri() {
         logMethod();
 
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return "";
+
         return player.getIconImageURI();
     }
 
@@ -713,6 +752,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
      */
     public int get_player_current_level_number() {
         logMethod();
+
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return -1;
 
         return player.getPlayerCurrentLevelNumber();
     }
