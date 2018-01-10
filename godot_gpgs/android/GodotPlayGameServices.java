@@ -13,6 +13,8 @@ import com.google.android.gms.games.leaderboard.Leaderboards;
 import org.godotengine.godot.gpgs.Client;
 import org.godotengine.godot.gpgs.PlayerInfo;
 
+import java.util.ArrayList;
+
 import static org.godotengine.godot.gpgs.Achievements.REQUEST_ACHIEVEMENTS;
 import static org.godotengine.godot.gpgs.Leaderboards.REQUEST_ALL_LEADERBOARDS;
 import static org.godotengine.godot.gpgs.Leaderboards.REQUEST_LEADERBOARD;
@@ -113,6 +115,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
         }
 
         return client.isConnected();
+
     }
 
     private String getCurrentMethodName() {
@@ -147,7 +150,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     private void initClient() {
         if (client != null) return;
         
-        client = new Client(this, activity, TAG, MODULE, debug);
+        client = new Client(this, activity, getOnClientConnectedCallbackList(), TAG, MODULE, debug);
         client.init();
         player = new PlayerInfo(client, activity, TAG, MODULE, debug);
         leaderboards = new org.godotengine.godot.gpgs.Leaderboards(
@@ -286,7 +289,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public void reconnect() {
         logMethod();
 
-        if (!isClientInitializedLogged() || !isConnectedLogged()) return;
+        if (!isClientInitializedLogged()) return;
 
         client.reconnect();
     }
@@ -761,8 +764,12 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     /********* ^ EXPORTED METHODS ^ **********/
     /*****************************************/
 
-    // public void onMainActivityResult(int requestCode, int resultCode, Intent data) {
-   protected void onMainActivityResult(int requestCode, int resultCode, Intent data) {
+
+    /*********************************************/
+    /*** v MAIN ACTIVITY LIFECYCLE CALLBACKS v ***/
+
+    public void onMainActivityResult(int requestCode, int resultCode, Intent data) {
+//   protected void onMainActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch(requestCode) {
             case RC_SIGN_IN:
@@ -796,11 +803,52 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
         }
     }
 
+    protected void onMainActivityResume() {
+        // debugLog("ON RESUME");
+
+        if (is_signing_in()) return;
+
+        reconnect();
+    }
+
+    protected void onMainActivityPause() {
+        // debugLog("ON PAUSE");
+
+        if (is_signing_in()) return;
+
+        disconnect();
+    }
+    /*** ^ MAIN ACTIVITY LIFECYCLE CALLBACKS ^ ***/
+    /*********************************************/
+
     /**
      * Called when client is connected
      * By default only updates player info
      */
-    public void onConnected() {
-        player.updatePlayerInfo();
+    private ArrayList<Client.OnConnectedCallback> getOnClientConnectedCallbackList() {
+        ArrayList<Client.OnConnectedCallback> list = new ArrayList<>();
+        
+        list.add(new Client.OnConnectedCallback() {
+            boolean runOnce = true;
+            @Override
+            public void run() {
+                player.updatePlayerInfo();
+            }
+        });
+        
+        /***
+        
+            Add any custom callbacks as follows
+        
+        list.add(new Client.OnConnectedCallback() {
+            @Override
+            public void run() {
+                // Your code goes here
+            }
+        });
+        
+        ***/
+        
+        return list;
     }
 }

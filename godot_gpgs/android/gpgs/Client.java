@@ -20,6 +20,8 @@ import org.godotengine.godot.GodotLib;
 import org.godotengine.godot.GodotPlayGameServices;
 import org.godotengine.godot.gpgs.tools.Dialogs;
 
+import java.util.ArrayList;
+
 public class Client extends GPGSEntity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -28,16 +30,28 @@ public class Client extends GPGSEntity
     private Boolean isIntentInProgress = false;
     private Boolean isResolvingConnectionFailure = false;
 
+    private Boolean isFirstConnection = true;
+
     private GoogleApiClient googleApiClient;
     private GodotPlayGameServices parent;
+
+    private ArrayList<OnConnectedCallback> onConnectedCallbackList;
+
+    public interface OnConnectedCallback {
+        boolean runOnce = false;
+
+        void run();
+    }
 
     public GoogleApiClient getGoogleApiClient() {
         return googleApiClient;
     }
 
-    public Client(
-        GodotPlayGameServices parent, Activity activity, String tag, String module, boolean debug) {
+    public Client(GodotPlayGameServices parent, Activity activity,
+                  ArrayList<OnConnectedCallback> onConnectedCallbackList,
+                  String tag, String module, boolean debug) {
         super(activity, tag, module, debug);
+        this.onConnectedCallbackList = onConnectedCallbackList;
         this.parent = parent;
     }
 
@@ -76,9 +90,9 @@ public class Client extends GPGSEntity
             public void run() {
                 if(!googleApiClient.isConnected()) return;
 
-                debugLog("Client.reconnect : disconnecting from Google Play Game Services...");
+                debugLog("Client.disconnect : disconnecting from Google Play Game Services...");
 
-                Games.signOut(googleApiClient);
+//                Games.signOut(googleApiClient);
                 googleApiClient.disconnect();
             }
         });
@@ -110,10 +124,17 @@ public class Client extends GPGSEntity
     public void onConnected(@Nullable Bundle bundle) {
         debugLog("onConnected");
 
-        parent.onConnected();
+        if (isFirstConnection) isFirstConnection = false;
+
+        for (OnConnectedCallback callback: onConnectedCallbackList) {
+            if (!isFirstConnection && callback.runOnce) continue;
+
+            callback.run();
+        }
 
         GodotLib.calldeferred(
             parent.getInstanceID(), "_on_gpgs_connected", new Object[] { });
+
         isResolvingConnectionFailure = false;
     }
 
@@ -130,7 +151,7 @@ public class Client extends GPGSEntity
             dialog.show();
         } else {
             // no built-in dialog: show the fallback error message
-            Dialogs.showSimpleAlert(getActivity().getBaseContext(),
+            Dialogs.showSimpleAlert(getActivity(),
                     "Failed to connect to Google Play Game Services! Please check your network connection" +
                             "and/or account and try again.");
         }
