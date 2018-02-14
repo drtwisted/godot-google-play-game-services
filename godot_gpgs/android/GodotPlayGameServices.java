@@ -62,7 +62,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
                 "set_debug",
                 "init", "init_with_debug",
                 "sign_in", "sign_out", "reconnect", "disconnect",
-                "is_signing_in", "is_signed_in",
+                "is_signing_in", "is_signed_in", "is_connection_suspended",
 
                 "leaderboard_submit_score", "leaderboard_submit_score_immediate",
                 "leaderboard_show_all_leaderboards",
@@ -322,6 +322,21 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
         logMethod();
         
         return clientInitialized && client.isConnecting();
+    }
+
+    /**
+     * Get connection status
+     *
+     * Usage:
+     *
+     *      if gpgs.is_connection_suspended():
+     *          //Do stuff
+     *
+     */
+    public boolean is_connection_suspended() {
+        logMethod();
+
+        return clientInitialized && client.isConnectionSuspeneded();
     }
 
     /* LEADERBOARD */

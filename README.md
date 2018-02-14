@@ -76,6 +76,7 @@ If the plugin doesn't work:
 |**reconnect**()| - | - |  Try to reconnect if connection is lost to Google (Play Games) Services |
 |**is_signing_in**()| - | *bool* | Get connection status (is connecting) |
 |**is_signed_in**()| - | *bool* | Get connection status (is connected) |
+|**is_connection_suspended**()| - | *bool* | Get connection status (is suspended) |
 
 
 #### Callback events

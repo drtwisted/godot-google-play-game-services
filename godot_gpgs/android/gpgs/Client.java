@@ -32,6 +32,8 @@ public class Client extends GPGSEntity
 
     private Boolean isFirstConnection = true;
 
+    private boolean connectionSuspeneded = false;
+
     private GoogleApiClient googleApiClient;
     private GodotPlayGameServices parent;
 
@@ -119,7 +121,9 @@ public class Client extends GPGSEntity
     public boolean isConnecting() {
         return googleApiClient.isConnecting();
     }
-    
+
+    public boolean isConnectionSuspeneded() { return connectionSuspeneded; }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         debugLog("onConnected");
@@ -136,11 +140,14 @@ public class Client extends GPGSEntity
             parent.getInstanceID(), "_on_gpgs_connected", new Object[] { });
 
         isResolvingConnectionFailure = false;
+        connectionSuspeneded = false;
     }
 
     @Override
     public void onConnectionSuspended(int cause) {
         debugLog("onConnectionSuspended int cause " + String.valueOf(cause));
+        connectionSuspeneded = true;
+
         GodotLib.calldeferred(parent.getInstanceID(), "_on_gpgs_suspended", new Object[] { cause });
     }
 
