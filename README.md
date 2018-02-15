@@ -141,9 +141,15 @@ If the plugin doesn't work:
 
 | Method name | Parameters | Returns | Description |
 |-|-|-|-|
+|**is_player_info_available**()| - | *boolean* **player_info_available** | Returns availability status of Google Play Game Service player info data|
 |**update_player_info**()| - | - | Update/download player info data from Google Play Game Services |
 |**get_player_id**()| - | *String* **player_id** |  Get player ID |
 |**get_player_display_name**()| - | *String* **player_display_name** -- e.g. Ed Boon | Get a player Display Name |
 |**get_player_title**()|- | *String* **player_title** -- e.g. n00b | Get player Title |
 |**get_player_icon_image_uri**()| - | *String* **player_icon_image_uri** | Get URI of Player's Icon Image if player info is loaded  |
 |**get_player_current_level_number**()| - | *int* **player_level_number** -- current level number or -1| Get Player's Current Level if player info is loaded |
+
+#### Callback events
+| Callback name | Parameters | Returns | Description |
+|-|-|-|-|
+|**_on_player_info_update**()| - | - | Callback on player info data loaded from Google Play Game Services |

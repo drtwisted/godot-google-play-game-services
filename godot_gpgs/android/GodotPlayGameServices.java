@@ -12,6 +12,7 @@ import com.google.android.gms.games.leaderboard.Leaderboards;
 
 import org.godotengine.godot.gpgs.Client;
 import org.godotengine.godot.gpgs.PlayerInfo;
+import org.godotengine.godot.gpgs.tools.PlayerInfoUpdateCallback;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,16 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     public int getInstanceID() {
         return instance_id;
     }
+
+    private PlayerInfoUpdateCallback getPlayerInfoUpdateCallback() {
+        return new PlayerInfoUpdateCallback() {
+            @Override
+            public void run() {
+                GodotLib.calldeferred(
+                    instance_id, "_on_player_info_updated", new Object[] { });
+            }
+        };
+    }
     /* - GETTERS */
 
     static public Godot.SingletonBase initialize(Activity p_activity) {
@@ -73,6 +84,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
                 "achievement_increment", "achievement_increment_immediate",
                 "achievement_show_list",
            
+                "is_player_info_available",
                 "get_player_id", "get_player_display_name",
                 "get_player_title", "get_player_current_level_number",
                 "get_player_icon_image_uri"});
@@ -96,6 +108,8 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
             _on_achievement_revealed(achievement_id, status) [*_immediate]
             _on_achievement_incremented(achievement_id, increment_ammount, status) [*_immediate]
 
+        Player Info:
+            _on_player_info_updated
                                                                                                 */
     }
 
@@ -677,6 +691,20 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
     /* PLAYER INFO */
 
     /**
+     * Check if player info from Google Play Game Services is available
+     *
+     * Usage:
+     *
+     *      gpgs.is_player_info_available()
+     */
+    public boolean is_player_info_available() {
+        logMethod();
+
+        if (!isClientInitializedLogged() || !isConnectedLogged()) return false;
+
+        return player.isPlayerInfoAvailable();       
+    }
+    /**
      * Update player info from Google Play Game Services
      *
      * Usage:
@@ -688,7 +716,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
 
         if (!isClientInitializedLogged() || !isConnectedLogged()) return;
 
-        player.updatePlayerInfo();
+        player.updatePlayerInfo(getPlayerInfoUpdateCallback());
     }
 
     /**
@@ -847,7 +875,7 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
             boolean runOnce = true;
             @Override
             public void run() {
-                player.updatePlayerInfo();
+                player.updatePlayerInfo(getPlayerInfoUpdateCallback());
             }
         });
         

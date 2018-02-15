@@ -14,13 +14,14 @@ import com.google.android.gms.games.Player;
 public class PlayerInfo extends GPGSComponent {
 
     private Player player;
+    private boolean playerInfoLoaded;
 
     public PlayerInfo(
         Client client, Activity activity, String tag, String module, boolean debug) {
         super(client, activity, tag, module, debug);
     }
 
-    public void updatePlayerInfo() {
+    public void updatePlayerInfo(final Runnable callback) {
         debugLog("Updating Player info...");
         final PlayerInfo thisReference = this;
         getActivity().runOnUiThread(new Runnable() {
@@ -30,6 +31,10 @@ public class PlayerInfo extends GPGSComponent {
                         Games.Players.getCurrentPlayer(
                                 thisReference.getClient().getGoogleApiClient()));
                 debugLog("> Updated Player info successfully!");
+
+                playerInfoLoaded = true;
+
+                callback.run();
             }
         });
     }
@@ -39,7 +44,7 @@ public class PlayerInfo extends GPGSComponent {
     }
 
     public boolean isPlayerInfoAvailable() {
-        if (player == null) {
+        if (player == null || !player.isDataValid() || !playerInfoLoaded) {
             if (debug) Log.w(TAG, MODULE + ": "
                     + Thread.currentThread().getStackTrace()[4].getMethodName()
                     + " player info is not retrieved yet. Try again!");
