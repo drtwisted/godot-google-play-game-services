@@ -106,7 +106,8 @@ If the plugin doesn't work:
 | Callback name | Parameters | Returns | Description |
 |-|-|-|-|
 |**_on_leaderboard_score_submitted**(leaderboard_id, score, status)| *String* **leaderboard_id** -- leaderboard id obtained from your Developer Console; *int* **score** -- score number the player earned; *String* **status** -- status returned. "STATUS_OK" in case of success | - |  Callback on leaderboard_score_submitted_immediate |
-
+|**_on_all_leaderboards_closed**()| - | - |  Callback on all leaderboard list closed by user |
+|**_on_all_leaderboard_closed**()| - | - |  Callback on all specific leaderboard (opened with leaderboard_show or leaderboard_show_with_time_span closed by user |
 
 
 
@@ -126,7 +127,7 @@ If the plugin doesn't work:
 #### Callback events
 | Callback name | Parameters | Returns | Description |
 |-|-|-|-|
-|**_on_achievements_loaded**()| - | - | Callback on achievements list loaded |
+|**_on_achievements_closed**()| - | - | Callback on achievements list closed by user |
 |**_on_achievement_unlocked**()| *String* **achievement_id** -- achievement_id achievement id obtained from your Developer Console; *String* **status** -- status returned. "STATUS_OK" in case of success| - | Callback on achievement unlocked (immediate) |
 |**_on_achievement_revealed**()| *String* **achievement_id** -- achievement_id achievement id obtained from your Developer Console; *String* **status** -- status returned. "STATUS_OK" in case of success| - | Callback on achievement revealed (immediate) |
 |**_on_achievement_incremented**()| *String* **achievement_id** -- achievement_id achievement id obtained from your Developer Console; *int* **increment_amount** -- increment_amount ammount of points to increment the achievement by; *String* **status** -- status returned. "STATUS_OK" in case of success| - | Callback on achievement unlocked (immediate) |

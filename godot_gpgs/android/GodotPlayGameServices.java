@@ -99,11 +99,14 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
             _on_gpgs_connection_failed(error_code, error_message)
         Leaderboards:
             _on_leaderboard_loaded
+            _on_leaderboard_closed
             _on_all_leaderboards_loaded
+            _on_all_leaderboards_closed
             _on_leaderboard_score_submitted(leaderboard_id, status) [*_immediate]
 
         Achievements:
             _on_achievements_loaded
+            _on_achievements_closed
             _on_achievement_unlocked(achievement_id, status) [*_immediate]
             _on_achievement_revealed(achievement_id, status) [*_immediate]
             _on_achievement_incremented(achievement_id, increment_ammount, status) [*_immediate]
@@ -173,6 +176,23 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
                 client, activity, TAG, MODULE, debug);
 
         clientInitialized = true;
+    }
+
+    private void onGpgsResultCallback(
+        int result, String callbackOkName, String callbackCanceledName) {
+        switch (result) {
+            case Activity.RESULT_OK:
+                GodotLib.calldeferred(
+                    instance_id, callbackOkName, new Object[] { });
+                break;
+
+            case Activity.RESULT_CANCELED:
+                GodotLib.calldeferred(
+                    instance_id, callbackCanceledName, new Object[] { });
+                break;
+            default:
+            break;
+        }        
     }
 
     private void _init(int instance_id, boolean debug) {
@@ -822,24 +842,24 @@ public class GodotPlayGameServices extends Godot.SingletonBase {
             break;
 
             case REQUEST_ALL_LEADERBOARDS:
-                if (resultCode == Activity.RESULT_OK) {
-                    debugLog("leaderboards list loaded");
-                    GodotLib.calldeferred(instance_id, "_on_all_leaderboards_loaded", new Object[] { });
-                }
+                onGpgsResultCallback(
+                    resultCode,
+                    "_on_all_leaderboards_loaded",
+                    "_on_all_leaderboards_closed");
             break;
 
             case REQUEST_LEADERBOARD:
-                if (resultCode == Activity.RESULT_OK) {
-                    debugLog("leaderboard loaded");
-                    GodotLib.calldeferred(instance_id, "_on_leaderboard_loaded", new Object[] { });
-                }
+                onGpgsResultCallback(
+                    resultCode,
+                    "_on_leaderboard_loaded",
+                    "_on_leaderboard_closed");
             break;
 
             case REQUEST_ACHIEVEMENTS:
-                if (resultCode == Activity.RESULT_OK) {
-                    debugLog("achievments list");
-                    GodotLib.calldeferred(instance_id, "_on_achievements_loaded", new Object[] { });
-                }
+                onGpgsResultCallback(
+                    resultCode,
+                    "_on_achievements_loaded",
+                    "_on_achievements_closed");
             break;
             default:
             break;
