@@ -107,7 +107,7 @@ If the plugin doesn't work:
 |-|-|-|-|
 |**_on_leaderboard_score_submitted**(leaderboard_id, score, status)| *String* **leaderboard_id** -- leaderboard id obtained from your Developer Console; *int* **score** -- score number the player earned; *String* **status** -- status returned. "STATUS_OK" in case of success | - |  Callback on leaderboard_score_submitted_immediate |
 |**_on_all_leaderboards_closed**()| - | - |  Callback on all leaderboard list closed by user |
-|**_on_all_leaderboard_closed**()| - | - |  Callback on all specific leaderboard (opened with leaderboard_show or leaderboard_show_with_time_span closed by user |
+|**_on_leaderboard_closed**()| - | - |  Callback on specific leaderboard (opened with leaderboard_show or leaderboard_show_with_time_span closed by user |
 
 
 
