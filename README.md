@@ -2,6 +2,9 @@
 
 ![alt tag](https://pp.userapi.com/c837229/v837229821/590db/jU-IlKeQn-Q.jpg "Logo")
 
+## NOTE: ATM module uses an outdated Google API which Google says to deprecate in not so distant future. Unfortunatly author has no resources to refactor this module using new API (as of now). If YOU wish to do so, your pull-request will be much appreciated and very welcome!
+
+
 This is the Google Play Game Services module for Godot Engine (https://github.com/okamstudio/godot)
 - Android only
 - Leaderboards
